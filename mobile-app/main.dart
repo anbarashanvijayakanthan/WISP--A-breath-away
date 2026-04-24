@@ -7,24 +7,71 @@ class WispApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: Colors.green, // This represents the 'Safe' state
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.child_care, size: 100, color: Colors.white),
-              SizedBox(height: 20),
-              Text(
-                "WISP: Monitoring Active",
-                style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+      theme: ThemeData.dark(),
+      home: WispMonitor(),
+    );
+  }
+}
+
+class WispMonitor extends StatefulWidget {
+  @override
+  _WispMonitorState createState() => _WispMonitorState();
+}
+
+class _WispMonitorState extends State<WispMonitor> {
+  Color statusColor = Colors.green;
+  String statusText = "BREATHING NORMAL";
+  String subText = "Monitoring chest retractions...";
+
+  void updateStatus(Color color, String main, String sub) {
+    setState(() {
+      statusColor = color;
+      statusText = main;
+      subText = sub;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: statusColor,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.favorite, size: 120, color: Colors.white),
+                  SizedBox(height: 20),
+                  Text(statusText, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                  Text(subText, style: TextStyle(fontSize: 18, color: Colors.white70)),
+                ],
               ),
-              Text(
-                "Breathing is Normal",
-                style: TextStyle(color: Colors.white70, fontSize: 16),
+            ),
+            // SIMULATOR PANEL (For your video demo)
+            Container(
+              padding: EdgeInsets.all(20),
+              color: Colors.black26,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => updateStatus(Colors.green, "BREATHING NORMAL", "Monitoring..."),
+                    child: Text("Safe"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => updateStatus(Colors.orange, "CHECK PATIENT", "Irregular rhythm detected"),
+                    child: Text("Warning"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => updateStatus(Colors.red, "CRITICAL ALERT", "Apnea / Grunting detected"),
+                    child: Text("Danger"),
+                  ),
+                ],
               ),
-            ],
-          ),
+            )
+          ],
         ),
       ),
     );
